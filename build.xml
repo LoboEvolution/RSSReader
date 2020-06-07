@@ -1,0 +1,76 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+<!-- Ant Buildfile for JSwingReader RSS NewsFeed Reader  -->
+
+<project name="JSwingReader" default="make" basedir=".">
+  <!-- Set the JDeveloper home directory and other things -->
+  <property file="${basedir}/build.properties" />
+  <property name="src.dir" value="${basedir}/src" />
+  <property name="dist.outdir" value="${basedir}/jars" />
+  <property name="name" value="jswingreader" />
+  <property name="Name" value="JSwingReader" />
+  <property name="version" value="0.3" />
+
+   <!--Set the classpath-->
+   <path id="classpath">
+      <pathelement location="${jdk.home}/jre/lib/rt.jar"/> 
+      <pathelement location="classes"/>
+      <pathelement location="${jdev.home}/jdev/lib/jdev-rt.jar"/>
+   </path>
+
+   <!--Set the source path-->
+   <path id="srcpath">
+      <pathelement location="${basedir}/src"/>
+   </path>
+
+   <target name="init">
+      <tstamp/>
+   </target>
+
+   <target name="compile" depends="init">
+      <mkdir dir="${compile.outdir}"/>
+      <!--Compile Java source files-->
+      <javac destdir="${compile.outdir}" debug="on">
+         <classpath refid="classpath"/>
+         <src refid="srcpath"/>
+         <include name="org/robsite/jswingreader/**" />
+      </javac>
+      <!--Copy files to output directory-->
+      <copy todir="${compile.outdir}">
+        <fileset dir="${src.dir}" includes="**/*.gif"/>
+      </copy>
+   </target>
+
+   <target name="doc" depends="init">
+      <mkdir dir="${javadoc.outdir}"/>
+      <!--Create Javadoc-->
+      <javadoc sourcepathref="srcpath" classpathref="classpath" destdir="${javadoc.outdir}" version="false" author="false" additionalparam="-J-Xmx32m">
+         <package name="org.robsite.jswingreader.action"/>
+         <package name="org.robsite.jswingreader.ui"/>
+         <package name="org.robsite.jswingreader.model"/>
+      </javadoc>
+   </target>
+
+   <target name="clean">
+      <!--Delete output directories-->
+      <delete dir="${compile.outdir}"/>
+      <delete dir="${javadoc.outdir}"/>
+   </target>
+   
+  <target name="jar" depends="compile">
+    <mkdir dir="${dist.outdir}"/>
+    <jar jarfile="${dist.outdir}/${name}-${version}.jar"
+         manifest="${src.dir}/meta-inf/jswingreader.mf">
+      <fileset dir="${compile.outdir}" >
+	      <include name="**/*" />
+      </fileset>
+    </jar>
+  </target>
+   
+
+   <target name="make" depends="compile"/>
+
+   <target name="rebuild" depends="clean,compile"/>
+
+   <target name="all" depends="compile,doc"/>
+
+</project>
